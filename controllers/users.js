@@ -6,16 +6,10 @@ const User = require("../models/User");
 const register = async (req, res) => {
     const { username, password, email, image } = req.body
     console.log('registering user');
-    const user = await User.register(new User({ username, email, image }), password, (err) => {
-        if (err) {
-            console.log('error while user register!');
-            return res.status(400).json({ msg: err.message });
-        }
+    const user = await User.create({ username, email, image })
+    await User.register(new user, password)
+    res.redirect('/');
 
-        console.log('user registered!');
-
-        res.redirect('/');
-    });
 
 }
 

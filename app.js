@@ -8,13 +8,16 @@ const session = require('express-session')
 const User = require('./models/User');
 const connectDB = require('./db/connect')
 require('dotenv').config()
+require('express-async-errors')
 
 //require routes
 
 const indexRouter = require('./routes/index');
 const postRouter = require('./routes/posts')
 const reviewRouter = require('./routes/reviews')
-
+//middlewares
+const notFoundMiddleware = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler');
 
 const app = express();
 
@@ -44,20 +47,22 @@ app.use('/', indexRouter);
 app.use('/posts', postRouter)
 app.use('/posts/:id/reviews', reviewRouter)
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
+// // catch 404 and forward to error handler
+// app.use(function (req, res, next) {
+//   next(createError(404));
+// });
 
 // error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// app.use(function (err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
+app.use(notFoundMiddleware)
+app.use(errorHandlerMiddleware)
 
 module.exports = app;
