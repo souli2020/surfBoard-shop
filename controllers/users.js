@@ -6,10 +6,10 @@ const User = require("../models/User");
 const register = async (req, res) => {
     const { username, password, email, image } = req.body
     console.log('registering user');
-    const user = await User.create({ username, email, image })
-    await User.register(new user, password)
-    res.redirect('/');
+    const newUser = new User({ username, email, image })
 
+    await User.register(newUser, password)
+    res.redirect('/');
 
 }
 
