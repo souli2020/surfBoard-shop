@@ -3,9 +3,15 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport')
+const session = require('express-session')
+const User = require('./models/User');
+const connectDB = require('./db/connect')
+require('dotenv').config()
+
+//require routes
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const postRouter = require('./routes/posts')
 const reviewRouter = require('./routes/reviews')
 
@@ -21,9 +27,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//config express-session
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'souli souli hassoun',
+  resave: false,
+  saveUninitialized: true
+}))
+//config passport
 
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+//routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/posts', postRouter)
 app.use('/posts/:id/reviews', reviewRouter)
 
