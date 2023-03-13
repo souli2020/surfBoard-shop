@@ -1,0 +1,11 @@
+<h1>EDIT VIEW PAGE</h1>
+ <form action="/posts/<%=post._id%>?_method=PUT" method="POST">
+    <div><input  type="text"   name="title" placeholder="title" value=" <%= post.title %>"></div>
+        
+    <div><input type="text" name="price"  placeholder="price"  value="<%= post.price %>"></div>
+    <div><textarea  name="description" placeholder="description" aria-placeholder="description"> <%= post.description %> </textarea></div>
+    <div><input type="text"  name="location" placeholder="location" value="<%= post.location %>"></div>
+    <div><input type="submit" placeholder="submit"></div>
+
+
+</form>

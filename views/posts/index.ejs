@@ -1,0 +1,14 @@
+ 
+
+<%posts.map( post => {%>
+
+
+    <div> <h1> <%= post.title  %></h1>
+        <div> <%= post.price  %></div>
+        <div> <%= post.description  %></div>
+        <div> <%= post.location  %></div>
+        <div><a href="/posts/<%= post.id  %>">View more</a></div>
+    </div>
+    
+<%}) %>
+ 
