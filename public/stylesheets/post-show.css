@@ -1,0 +1,87 @@
+/* Style the post title */
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Style the post details */
+.post-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.post-details div {
+    margin-bottom: 1rem;
+}
+
+/* Style the post images */
+.post-images {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.post-images img {
+    margin-right: 1rem;
+}
+
+/* Style the delete button */
+.delete-button {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+/* Style the reviews section */
+.reviews {
+    margin-top: 2rem;
+}
+
+.reviews h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.review-item {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    padding: 1rem;
+}
+
+.review-item h1 {
+    margin-top: 0;
+}
+
+.review-item button {
+    margin-left: 1rem;
+}
+
+/* Style the edit review form */
+
+
+.edit-review-form textarea,
+.edit-review-form input[type="number"] {
+    margin-bottom: 1rem;
+}
+
+.toggle-edit-form {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+
+
+.displayEdit {
+    display: none;
+}
+
+.clear-rating-btn {
+    display: block;
+}
