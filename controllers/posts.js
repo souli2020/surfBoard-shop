@@ -1,5 +1,12 @@
 const Post = require('../models/Post')
 const Review = require('../models/Review')
+const cloudinary = require('cloudinary').v2
+cloudinary.config({
+    cloud_name: 'dgd8mcevc',
+    api_key: '795329721125445',
+    api_secret: process.env.CLOUDINARY_SECRET
+
+})
 
 const getPosts = async (req, res) => {
 
@@ -26,7 +33,7 @@ const getNewPost = async (req, res) => {
 const createPost = async (req, res) => {
     req.body.images = []
     req.body.author = req.user._id
-    console.log(req.files)
+    // console.log(req.files)
     for (let file of req.files) {
         let image = await cloudinary.uploader.upload(file.path);
         req.body.images.push({
@@ -39,6 +46,7 @@ const createPost = async (req, res) => {
     // res.status(200).render('posts/new', { newPost })
 
     req.session.success = "New Post successfuly created"
+    // console.log(newPost.images)
 
     res.status(200).redirect(`/posts/${newPost._id}`)
 
@@ -68,17 +76,15 @@ const getPost = async (req, res) => {
 const getEditedPost = async (req, res) => {
     const postId = req.params.id
     const post = await Post.findOne({ _id: postId })
-    console.log(post)
+    // console.log(post)
 
     res.status(200).render('posts/edit', { post, title: `Edit Post` })
 
 }
 const updatePost = async (req, res) => {
     // console.log(req.body)
-    // console.log(req.body.deleteImages)
 
     let post = await Post.findById(req.params.id)
-    console.log(post.images)
 
     if (req.body.deleteImages && req.body.deleteImages.length) {
         let deleteImages = req.body.deleteImages
@@ -115,7 +121,7 @@ const deletePost = async (req, res) => {
     const post = await Post.findById({ _id: postId })
     let images = post.images
     for (let img of images) {
-        console.log(img.public_id)
+
         await cloudinary.uploader.destroy(img.public_id)
     }
     // await Post.deleteOne({ post })
