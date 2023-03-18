@@ -4,7 +4,6 @@ const router = express.Router();
 const { getRegister, getLogin, register,
   getProfile, updateProfile, deleteProfile, login, logOut, forgetPw, updatePw, resetPw, updateResetPw } = require('../controllers/users');
 const authenticateUser = require('../middleware/authenticat');
-const sendVerificationEmail = require('../middleware/email');
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.render('index', { title: 'Surf Shop -Home' });
