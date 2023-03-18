@@ -1,6 +1,19 @@
- 
+<% layout('layouts/boilerplate') -%> 
+<div style="display: flex; justify-content: space-between; margin: 1rem;">
+    <span>Page <%= result.page %> of <%= result.totalPages %></span>
 
-<%posts.map( post => {%>
+    <% if (result.hasPrevPage) { %>
+        <a href="http://localhost:3000/posts?page=<%= result.prevPage %>"
+            style="padding: 0.5rem; background-color: #f0f0f0; border-radius: 0.25rem;">Previous</a>
+        <% } %>
+
+            <% if (result.hasNextPage) { %>
+                <a href="http://localhost:3000/posts?page=<%= result.nextPage %>"
+                    style="padding: 0.5rem; background-color: #f0f0f0; border-radius: 0.25rem;">Next</a>
+                <% } %>
+</div>
+
+<%result.docs.map( post => {%>
 
 
     <div> <h1> <%= post.title  %></h1>
