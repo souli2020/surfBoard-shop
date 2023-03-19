@@ -15,7 +15,7 @@ const PostSchema = new mongoose.Schema({
 
     },
     images: [
-        { url: String, public_id: String }
+        { path: String, filename: String }
     ],
     location: String,
     lat: Number,

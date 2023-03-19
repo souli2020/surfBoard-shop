@@ -57,14 +57,14 @@ passport.deserializeUser(User.deserializeUser());
 //Pre-routes middleware
 
 app.use((req, res, next) => {
-  req.user = {
-    "_id": "6411f57de28ec365fb1cdc3d",
-    "username": "mimoune"
-  }
   // req.user = {
-  //   "_id": "64142eefcac19e4e9243c0ff",
-  //   "username": "soulim"
+  //   "_id": "6411f57de28ec365fb1cdc3d",
+  //   "username": "mimoune"
   // }
+  req.user = {
+    "_id": "6416de62c7e9d19bf0549121",
+    "username": "soulim"
+  }
   // req.user = {
   //   "_id": "641194519b8d073a4029206b",
   //   "username": "soulimani"

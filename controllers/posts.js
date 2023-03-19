@@ -1,12 +1,12 @@
 const Post = require('../models/Post')
 const Review = require('../models/Review')
-const cloudinary = require('cloudinary').v2
-cloudinary.config({
-    cloud_name: 'dgd8mcevc',
-    api_key: '795329721125445',
-    api_secret: process.env.CLOUDINARY_SECRET
+const { cloudinary } = require('../cloudinary')
+// cloudinary.config({
+//     cloud_name: 'dgd8mcevc',
+//     api_key: '795329721125445',
+//     api_secret: process.env.CLOUDINARY_SECRET
 
-})
+// })
 
 const getPosts = async (req, res) => {
 
@@ -35,10 +35,10 @@ const createPost = async (req, res) => {
     req.body.author = req.user._id
     // console.log(req.files)
     for (let file of req.files) {
-        let image = await cloudinary.uploader.upload(file.path);
+        // let image = await cloudinary.uploader.upload(file.path);
         req.body.images.push({
-            url: image.secure_url,
-            public_id: image.public_id
+            path: file.path,
+            filename: file.filename
         })
     }
 
@@ -89,18 +89,18 @@ const updatePost = async (req, res) => {
     if (req.body.deleteImages && req.body.deleteImages.length) {
         let deleteImages = req.body.deleteImages
 
-        for (let public_id of deleteImages) {
-            await cloudinary.uploader.destroy(public_id)
-            post.images = post.images.filter(img => img.public_id !== public_id)
+        for (let filename of deleteImages) {
+            await cloudinary.uploader.destroy(filename)
+            post.images = post.images.filter(img => img.filename !== filename)
         }
 
     }
     if (req.files) {
         for (let file of req.files) {
-            let image = await cloudinary.uploader.upload(file.path);
+            // let image = await cloudinary.uploader.upload(file.path);
             post.images.push({
-                url: image.secure_url,
-                public_id: image.public_id
+                path: file.path,
+                filename: file.filename
             })
         }
     }
@@ -122,7 +122,7 @@ const deletePost = async (req, res) => {
     let images = post.images
     for (let img of images) {
 
-        await cloudinary.uploader.destroy(img.public_id)
+        await cloudinary.uploader.destroy(img.filename)
     }
     // await Post.deleteOne({ post })
     await post.remove()

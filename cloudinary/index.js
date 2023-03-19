@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const cloudinary = require('cloudinary').v2
 cloudinary.config({
     cloud_name: 'dgd8mcevc',
@@ -5,10 +6,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 
 })
-const cloudinaryStorage = require('multer-storage-cloudinary');
-const storage = cloudinaryStorage({
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    folder: 'surf-shop',
+    folder: 'surf-folder',
     allowedFormats: ['jpeg', 'jpg', 'png'],
     filename: function (req, file, cb) {
         let buf = crypto.randomBytes(16);

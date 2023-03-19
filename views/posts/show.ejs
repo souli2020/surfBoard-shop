@@ -36,7 +36,7 @@
             <div>
                 <% post.images.forEach(function(image) { %>
 
-                    <img src="<%= image.url %>" alt="image alt" data-id="<%= image.public_id %>" width="50px">
+                    <img src="<%= image.path %>" alt="image alt" data-id="<%= image.filename %>" width="50px">
 
                     <% }) %>
             </div>
