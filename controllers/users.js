@@ -4,17 +4,30 @@ const User = require("../models/User");
 
 //register
 const getRegister = async (req, res) => {
-    res.status(200).render('register', { title: 'Register' })
+    res.render('register', {
+        title: 'Register',
+        username: "",
+        email: ""
+    })
 }
 
 const register = async (req, res) => {
     const { username, password, email, image } = req.body
     console.log('registering user');
+    const userExists = await User.findOne({ email })
+    if (userExists) {
+        const { username, email } = req.body
+        req.session.error = "User with the given email already exists";
+        return res.redirect('register')
+    }
     const newUser = new User({ username, email, image })
 
     let user = await User.register(newUser, password);
     req.login(user, function (err) {
-        if (err) { return next(err); }
+        if (err) {
+            req.session.error = "Something went wrong. We can't login the user."
+            res.redirect('/register')
+        }
         req.session.success = `Welcome to Surf Shop, ${user.username}!`;
         res.redirect('/');
     });
@@ -25,7 +38,8 @@ const register = async (req, res) => {
 //login
 const getLogin = async (req, res) => {
     // console.log(req.isAuthenticated())
-    res.status(200).render('login', { title: 'Login' })
+    req.session.redirectTo = req.originalUrl
+    res.status(200).render('login', { title: 'Login', redirect: req.session.redirectTo })
 }
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -40,10 +54,11 @@ const login = async (req, res) => {
         }
         req.session.success = `Welcome back, ${username}!`;
         const redirectUrl = req.session.redirectTo || '/posts';
+        console.log(req.session)
         // console.log(req.session.redirectTo)
         // console.log(req.isAuthenticated());
         res.status(302).redirect(redirectUrl);
-        delete req.session.redirectTo;
+        // delete req.session.redirectTo;
     });
 
 }

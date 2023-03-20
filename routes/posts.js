@@ -10,10 +10,10 @@ const { getPosts, getNewPost, createPost, getPost, updatePost, deletePost, getEd
 router.get('/', isLoggin, getPosts)
 router.get('/new', isLoggin, getNewPost)
 router.post('/', upload.array('images', 4), isLoggin, createPost)
-router.get('/:id', getPost)
-router.get('/:id/edit', getEditedPost)
-router.put('/:id', upload.array('images', 4), updatePost)
-router.delete('/:id', deletePost)
+router.get('/:id', isLoggin, getPost)
+router.get('/:id/edit', isLoggin, getEditedPost)
+router.put('/:id', isLoggin, upload.array('images', 4), updatePost)
+router.delete('/:id', isLoggin, deletePost)
 
 
 
