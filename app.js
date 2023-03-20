@@ -35,6 +35,7 @@ const reviewRouter = require('./routes/reviews')
 const authenticateUser = require('./middleware/authenticat');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const isLoggin = require('./middleware/checkLog')
 
 
 
@@ -82,8 +83,8 @@ app.use((req, res, next) => {
 })
 //routes
 app.use('/', indexRouter);
-app.use('/posts', postRouter)
-app.use('/posts/:id/reviews', reviewRouter)
+app.use('/posts', isLoggin, postRouter)
+app.use('/posts/:id/reviews', isLoggin, reviewRouter)
 
 // // catch 404 and forward to error handler
 app.use(function (req, res, next) {
