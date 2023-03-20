@@ -1,5 +1,7 @@
 require('dotenv').config()
 require('express-async-errors')
+const favicon = require('serve-favicon');
+
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -28,12 +30,15 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 const app = express();
+
+
 // use ejs-locals for all ejs templates:
 app.engine('ejs', engine);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -57,7 +62,7 @@ passport.deserializeUser(User.deserializeUser());
 //Pre-routes middleware
 
 app.use((req, res, next) => {
-
+  console.log(req.session)
   res.locals.currentUser = req.user
   res.locals.title = 'Surf Shop'
   res.locals.success = req.session.success || '';
@@ -66,6 +71,7 @@ app.use((req, res, next) => {
   delete req.session.success;
 
   res.locals.error = req.session.error || ''
+  delete req.session.redirectTo
   delete req.session.error
   next()
 })
