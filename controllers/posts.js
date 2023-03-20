@@ -74,15 +74,20 @@ const getPost = async (req, res) => {
 }
 //show the edit post page
 const getEditedPost = async (req, res) => {
-    const postId = req.params.id
-    const post = await Post.findOne({ _id: postId })
-    // console.log(post)
 
-    res.status(200).render('posts/edit', { post, title: `Edit Post` })
+    // We dont need the code below, becausewe defined the post @ the middleware in res.locals.post
+    // const postId = req.params.id
+    // const post = await Post.findOne({ _id: postId })
+    // res.status(200).render('posts/edit', { post, title: `Edit Post` })
 
+    // console.log(res.locals.post)
+    res.status(200).render('posts/edit');
 }
 const updatePost = async (req, res) => {
     // console.log(req.body)
+
+    // we have access to the post from the isAuthor middleware and we can change the code below
+    //to be const {post} = res.locals.post
 
     let post = await Post.findById(req.params.id)
 
@@ -117,6 +122,9 @@ const updatePost = async (req, res) => {
 }
 
 const deletePost = async (req, res) => {
+    // Since we have access to the post from the isAuthor middleware and we can
+    //change the code below to be const:
+    // {post} = res.locals.post  "WE DON'T NEED TO SEARCH FOR THE POST BY MONGOOSE"
     const postId = req.params.id
     const post = await Post.findById({ _id: postId })
     let images = post.images
