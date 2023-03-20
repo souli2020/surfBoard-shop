@@ -31,10 +31,13 @@ const login = async (req, res) => {
     const { username, password } = req.body;
     const { user, error } = await User.authenticate()(username, password);
     if (!user && error) {
-        return next(error);
+        req.session.error = "Wrong password or username";
+        return res.redirect('/login')
     }
     req.login(user, function (err) {
-        if (err) return next(err);
+        if (err) {
+            req.session.error = "Something went wrong";
+        }
         req.session.success = `Welcome back, ${username}!`;
         const redirectUrl = req.session.redirectTo || '/posts';
         // console.log(req.session.redirectTo)
