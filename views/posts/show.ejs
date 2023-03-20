@@ -13,6 +13,7 @@
             <div>
                 <%= post.location %>
             </div>
+           
             <div>
             <% for(var i=0; i < 5; i++) { %>
                 <% if(i < floorRating) { %>
@@ -27,11 +28,20 @@
             </div>
             <div>
                 Created By : <%= post.author.username ? post.author.username : '' %>
+                Date: <%= post.createdAt %>
+                updated At: <%= post.updatedAt %>
             </div>
-
+            <!-- HIDE CONDITIONALLY THE EDIT POST UI -->
+            <% if(post.author.equals(currentUser._id)) { %>
             <div>
                 <a href="/posts/<%= post.id  %>/edit">Edit Post</a>
             </div>
+            <form action="/posts/<%=post._id%>?_method=DELETE" method="POST">
+                <button type="submit" value="Delete" class="delete-button"> Delete </button>
+            
+            </form>
+            <% } %>
+            <!-- END OF CONDITION -->
 
             <div>
                 <% post.images.forEach(function(image) { %>
@@ -44,10 +54,7 @@
             </div>
         </div>
 
-        <form action="/posts/<%=post._id%>?_method=DELETE" method="POST">
-            <button type="submit" value="Delete" class="delete-button"> Delete </button>
-
-        </form>
+      
     </div>
     <h2>Reviews</h2>
     <!-- create a review -->
