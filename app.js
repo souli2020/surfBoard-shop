@@ -1,6 +1,7 @@
 require('dotenv').config()
 require('express-async-errors')
 const favicon = require('serve-favicon');
+const session = require('express-session')
 
 const createError = require('http-errors');
 const express = require('express');
@@ -8,7 +9,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport')
-const session = require('express-session')
 const User = require('./models/User');
 const connectDB = require('./db/connect')
 const methodOverride = require('method-override')
@@ -16,7 +16,14 @@ const engine = require('ejs-mate')
 //fake posts generator
 // const genFakePosts = require('./seed')
 // genFakePosts()
-
+const app = express();
+//config express-session
+// app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'souli souli hassoun',
+  resave: false,
+  saveUninitialized: true
+}))
 
 //require routes
 
@@ -29,7 +36,7 @@ const authenticateUser = require('./middleware/authenticat');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
-const app = express();
+
 
 
 // use ejs-locals for all ejs templates:
@@ -38,6 +45,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(express.json());
@@ -45,13 +53,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'))
-//config express-session
-app.set('trust proxy', 1) // trust first proxy
-app.use(session({
-  secret: 'souli souli hassoun',
-  resave: false,
-  saveUninitialized: true
-}))
+
 //config passport
 app.use(passport.initialize())
 app.use(passport.session())
@@ -59,19 +61,22 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
+
 //Pre-routes middleware
 
 app.use((req, res, next) => {
-  console.log(req.session)
+  // console.log(req.session)
   res.locals.currentUser = req.user
   res.locals.title = 'Surf Shop'
   res.locals.success = req.session.success || '';
 
+  req.session.redirectTo = req.originalUrl
 
   delete req.session.success;
 
   res.locals.error = req.session.error || ''
-  delete req.session.redirectTo
+
   delete req.session.error
   next()
 })

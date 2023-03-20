@@ -37,9 +37,14 @@ const register = async (req, res) => {
 
 //login
 const getLogin = async (req, res) => {
-    // console.log(req.isAuthenticated())
-    req.session.redirectTo = req.originalUrl
-    res.status(200).render('login', { title: 'Login', redirect: req.session.redirectTo })
+    if (req.isAuthenticated()) {
+        req.session.success = 'You are already logged in';
+        return res.redirect('/')
+    }
+
+    res.status(200).render('login', { title: 'Login' })
+
+
 }
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -53,9 +58,8 @@ const login = async (req, res) => {
             req.session.error = "Something went wrong";
         }
         req.session.success = `Welcome back, ${username}!`;
-        const redirectUrl = req.session.redirectTo || '/posts';
-        console.log(req.session)
-        // console.log(req.session.redirectTo)
+        const redirectUrl = req.session.redirectTo || '/posts'
+        console.log(req.originalUrl)
         // console.log(req.isAuthenticated());
         res.status(302).redirect(redirectUrl);
         // delete req.session.redirectTo;
@@ -65,6 +69,7 @@ const login = async (req, res) => {
 const logOut = (req, res, next) => {
     req.logout((err) => {
         if (err) { return next(err); }
+        req.session.success = "See you later";
         res.redirect('/');
     });
 }
