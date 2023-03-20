@@ -2,31 +2,47 @@ const passport = require('passport')
 
 const User = require("../models/User");
 
+//register
+const getRegister = async (req, res) => {
+    res.status(200).render('register', { title: 'Register' })
+}
+
 const register = async (req, res) => {
-    const { username, password, email, image, verificationToken } = req.body
+    const { username, password, email, image } = req.body
     console.log('registering user');
-    const newUser = new User({ username, email, image, verificationToken })
+    const newUser = new User({ username, email, image })
 
-    await User.register(newUser, password)
-    res.redirect('/');
+    let user = await User.register(newUser, password);
+    req.login(user, function (err) {
+        if (err) { return next(err); }
+        req.session.success = `Welcome to Surf Shop, ${user.username}!`;
+        res.redirect('/');
+    });
 
 }
 
-const getRegister = async (res, rs) => {
-    res.status(200).json('get register form')
-}
 
-
+//login
 const getLogin = async (req, res) => {
-    res.status(200).send('login page')
+    // console.log(req.isAuthenticated())
+    res.status(200).render('login', { title: 'Login' })
 }
-
-
-
 const login = async (req, res) => {
-    const user = await User.findOne({ username: req.body.username })
-    res.status(200).redirect('/');
-    // res.status(200).json({ user })
+    const { username, password } = req.body;
+    const { user, error } = await User.authenticate()(username, password);
+    if (!user && error) {
+        return next(error);
+    }
+    req.login(user, function (err) {
+        if (err) return next(err);
+        req.session.success = `Welcome back, ${username}!`;
+        const redirectUrl = req.session.redirectTo || '/posts';
+        // console.log(req.session.redirectTo)
+        // console.log(req.isAuthenticated());
+        res.status(302).redirect(redirectUrl);
+        delete req.session.redirectTo;
+    });
+
 }
 const logOut = (req, res, next) => {
     req.logout((err) => {

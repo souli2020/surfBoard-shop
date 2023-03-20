@@ -4,6 +4,7 @@ const router = express.Router();
 const { getRegister, getLogin, register,
   getProfile, updateProfile, deleteProfile, login, logOut, forgetPw, updatePw, resetPw, updateResetPw } = require('../controllers/users');
 const authenticateUser = require('../middleware/authenticat');
+// const isUserExists = require('../middleware/isUserExists');
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.render('index', { title: 'Surf Shop -Home' });
@@ -12,7 +13,7 @@ router.get('/', (req, res, next) => {
 router.get('/register', getRegister)
 router.post('/register', register)
 router.get('/login', getLogin)
-router.post('/login', authenticateUser, login)
+router.post('/login', login)
 router.get('/logout', logOut)
 router.get('/profile', getProfile)
 router.put('/profile/:user_id', updateProfile)
