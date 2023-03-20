@@ -11,10 +11,8 @@ const genFakePosts = async () => {
         const post = {
             title: faker.lorem.word(),
             description: faker.lorem.text(),
-            author: {
-                "_id": "6411f57de28ec365fb1cdc3d",
-                "username": "mimoune"
-            }
+            author: "641719e543fcd9a317a50dd7",
+
 
         }
         await Post.create(post)
