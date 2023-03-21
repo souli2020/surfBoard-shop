@@ -11,3 +11,15 @@ a {
 .fa-star-half-alt {
   color: gold;
 }
+
+.color-green {
+  color: green;
+}
+
+.color-red {
+  color: red;
+}
+
+.required {
+  color: red;
+}
