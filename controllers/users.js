@@ -1,7 +1,7 @@
 const passport = require('passport')
 
 const User = require("../models/User");
-
+const Post = require('../models/Post')
 //register
 const getRegister = async (req, res) => {
     res.render('register', {
@@ -78,22 +78,32 @@ const logOut = (req, res, next) => {
 
 
 
-
-
 const getProfile = async (req, res) => {
-    res.status(200).send('profile page')
+    //the posts are returned in res.locals.posts in isLoggin middleware
+    const posts = await Post.find().where('author').equals(req.user.id).limit(10)
+    console.log(posts.length);
+    res.status(200).render('profile', { posts })
+
 }
+
 const updateProfile = async (req, res) => {
     res.status(200).send('update profile page')
 }
 const deleteProfile = async (req, res) => {
     res.status(200).send('delete ¨rofile page')
 }
+
+
 const forgetPw = async (req, res) => {
-    res.status(200).send('password forgeten page')
+    res.status(200).render('forgot-pw')
 }
+
+
+
+
+
 const updatePw = async (req, res) => {
-    res.status(200).send('password forgeten page')
+    res.status(200).send('password updated')
 }
 const resetPw = async (req, res) => {
     res.status(200).send('password forgeten page')
