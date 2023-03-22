@@ -87,6 +87,7 @@ const getProfile = async (req, res) => {
 }
 
 const updateProfile = async (req, res) => {
+    const { username, userEmail } = req.body
     console.log(res.locals)
     res.locals.user = req.user;
     console.log(res.locals.user)
@@ -97,6 +98,12 @@ const updateProfile = async (req, res) => {
     // console.log(user)
     if (!user) {
         req.session.error = "User not found";
+        return res.redirect('/profile')
+    }
+    const userNameExists = await User.findOne({ username })
+    const userEmailExists = await User.findOne({ userEmail })
+    if (userNameExists || userEmailExists) {
+        req.session.error = "Username or email Not Available";
         return res.redirect('/profile')
     }
     const newUser = await User.findOneAndUpdate({ email }, req.body, { new: true, runValidators: true })
