@@ -23,3 +23,127 @@ a {
 .required {
   color: red;
 }
+
+/*hide update profile form*/
+
+/* Hide the form by default */
+.displayForm {
+  display: none;
+}
+
+/* Define the animation for showing the form */
+@keyframes slide-down {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Define the animation for hiding the form */
+@keyframes slide-up {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+}
+
+/* Apply the animation to the form when it's shown */
+form.show {
+  display: block;
+  animation: slide-down 0.73s ease-in;
+}
+
+/* Apply the animation to the form when it's hidden */
+form.hide {
+  animation: slide-up 0.43s ease-out;
+}
+
+/* Add some temporaire styling for your form  */
+/* Style the form container */
+.displayForm {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the form fields */
+.displayForm div {
+  margin: 10px 0;
+}
+
+.displayForm label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.displayForm input[type="text"],
+.displayForm input[type="password"],
+.displayForm input[type="email"],
+.displayForm input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* Style the validation message */
+#validation-message {
+
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Style the submit button */
+.displayForm button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.displayForm button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+/* Style the update profile button */
+#updateBtn {
+  display: block;
+  margin: auto;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#updateBtn:hover {
+  background-color: #2980b9;
+}

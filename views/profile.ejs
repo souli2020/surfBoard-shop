@@ -12,8 +12,8 @@
     </div>
 <% }) %>
 
-<p>Update profile</p>
-<form action="/profile?_method=PUT" method="POST" id="update-profile">
+<button style="display: block;" type="button" id="updateBtn">Update profile</button>
+<form action="/profile?_method=PUT" method="POST" id="update-profile" class="displayForm">
     <div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="username" value="<%= currentUser.username %>"
@@ -42,7 +42,7 @@
         <input type="file" id="image" name="image">
     </div>
 
-    <input type="submit">
+    <button type="submit"> Submit </button>
 </form>
 
 <script src="/javascripts/profile.js"></script> 

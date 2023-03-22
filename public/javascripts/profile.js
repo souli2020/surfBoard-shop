@@ -36,5 +36,15 @@ form.addEventListener('submit', e => {
 });
 
 
+const updateProfileBtn = document.getElementById('updateBtn')
+const updateForm = document.querySelector('.displayForm')
+updateProfileBtn.addEventListener('click', e => {
+    e.preventDefault();
+    updateForm.classList.toggle("show");
+    updateForm.classList.toggle("hide");
+    updateProfileBtn.textContent = updateForm.classList.contains('show') ? "cancel" : "update profile";
+
+})
+
 
 
