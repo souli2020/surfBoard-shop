@@ -13,14 +13,14 @@
 <% }) %>
 
 <p>Update profile</p>
-<form action="/profile/updated?_method=PUT" method="POST" id="update-profile">
+<form action="/profile?_method=PUT" method="POST" id="update-profile">
     <div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="username" value="<%= currentUser.username %>"
             autofocus required>
     </div>
     <div>
-        <label for="current-password">Current Password (required to update profile):</label>
+        <label for="current-password">Current Password (required):</label>
         <input type="password" id="current-password" name="currentPassword" placeholder="current password" required>
     </div>
     <div>
