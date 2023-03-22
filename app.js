@@ -2,6 +2,7 @@ require('dotenv').config()
 require('express-async-errors')
 const favicon = require('serve-favicon');
 const session = require('express-session')
+const cors = require('cors');
 
 const createError = require('http-errors');
 const express = require('express');
@@ -17,6 +18,7 @@ const engine = require('ejs-mate')
 // const genFakePosts = require('./seed')
 // genFakePosts()
 const app = express();
+app.use(cors())
 //config express-session
 // app.set('trust proxy', 1) // trust first proxy
 app.use(session({
