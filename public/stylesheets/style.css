@@ -147,3 +147,49 @@ form.hide {
 #updateBtn:hover {
   background-color: #2980b9;
 }
+
+/* provisional styling for all posts page
+/* Styles for pagination section */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem;
+  align-items: center;
+}
+
+.pagination span {
+  font-size: 1.2rem;
+}
+
+.pagination a {
+  padding: 0.5rem;
+  background-color: #f0f0f0;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Styles for post section */
+.post {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+.post h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.post div {
+  margin-bottom: 0.5rem;
+}
+
+.post a {
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
