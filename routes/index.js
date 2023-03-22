@@ -5,6 +5,7 @@ const { getRegister, getLogin, register,
   getProfile, updateProfile, deleteProfile, login, logOut, forgetPw, updatePw, resetPw, updateResetPw } = require('../controllers/users');
 const authenticateUser = require('../middleware/authenticat');
 const isLoggin = require('../middleware/checkLog');
+const isValidPassword = require('../middleware/isValidPassword');
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.render('index', { title: 'Surf Shop -Home' });
@@ -16,7 +17,7 @@ router.get('/login', getLogin)
 router.post('/login', login)
 router.get('/logout', logOut)
 router.get('/profile', isLoggin, getProfile)
-router.put('/profile/updated', updateProfile)
+router.put('/profile', isValidPassword, updateProfile)
 router.get('/forgot-pw', forgetPw)
 router.put('/forgot-pw', updatePw)
 router.get('/reset/:token', resetPw)

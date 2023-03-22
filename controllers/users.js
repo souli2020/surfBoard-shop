@@ -87,8 +87,37 @@ const getProfile = async (req, res) => {
 }
 
 const updateProfile = async (req, res) => {
-    res.status(200).send('update profile page')
+    console.log(res.locals)
+    res.locals.user = req.user;
+    console.log(res.locals.user)
+    // const { email, username } = req.body
+    const { email } = req.user
+    // console.log(email)
+    const user = await User.findOne({ email })
+    // console.log(user)
+    if (!user) {
+        req.session.error = "User not found";
+        return res.redirect('/profile')
+    }
+    const newUser = await User.findOneAndUpdate({ email }, req.body, { new: true, runValidators: true })
+    await newUser.save()
+    req.login(newUser, function (err) {
+        if (err) {
+            req.session.error = "Error logging in after profile update"
+            return res.redirect('/profile')
+        }
+        req.session.success = "Profile Updated Successfully!"
+        res.status(200).redirect('/profile')
+    })
 }
+
+
+
+
+
+
+
+
 const deleteProfile = async (req, res) => {
     res.status(200).send('delete ¨rofile page')
 }
