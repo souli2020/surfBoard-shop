@@ -37,7 +37,8 @@ const reviewRouter = require('./routes/reviews')
 const authenticateUser = require('./middleware/authenticat');
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
-const isLoggin = require('./middleware/checkLog')
+const isLoggin = require('./middleware/checkLog');
+const { log } = require('console');
 
 
 
@@ -102,6 +103,8 @@ app.use(function (err, req, res, next) {
   // // render the error page
   // res.status(err.status || 500);
   // res.render('error');
+  log(err)
+
   req.session.error = err.message
   res.redirect('back')
 });
