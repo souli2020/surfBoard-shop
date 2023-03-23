@@ -88,9 +88,9 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     const { username, userEmail } = req.body
-    console.log(res.locals)
+    // console.log(res.locals)
     res.locals.user = req.user;
-    console.log(res.locals.user)
+    // console.log(res.locals.user)
     // const { email, username } = req.body
     const { email } = req.user
     // console.log(email)
@@ -100,22 +100,34 @@ const updateProfile = async (req, res) => {
         req.session.error = "User not found";
         return res.redirect('/profile')
     }
-    const userNameExists = await User.findOne({ username })
-    const userEmailExists = await User.findOne({ userEmail })
-    if (userNameExists || userEmailExists) {
-        req.session.error = "Username or email Not Available";
-        return res.redirect('/profile')
-    }
-    const newUser = await User.findOneAndUpdate({ email }, req.body, { new: true, runValidators: true })
-    await newUser.save()
-    req.login(newUser, function (err) {
-        if (err) {
-            req.session.error = "Error logging in after profile update"
+    // const userNameExists = await User.findOne({ username })
+    // const userEmailExists = await User.findOne({ userEmail })
+    // if (userNameExists || userEmailExists) {
+    //          req.session.error = "Username or email Not Available";
+    //     return res.redirect('/profile')
+    // }
+    try {
+        const newUser = await User.findOneAndUpdate({ email }, req.body, { new: true, runValidators: true })
+        await newUser.save()
+        req.login(newUser, function (err) {
+            if (err) {
+                req.session.error = "Error logging in after profile update"
+                return res.redirect('/profile')
+            }
+            req.session.success = "Profile Updated Successfully!"
+            res.status(200).redirect('/profile')
+        })
+    } catch (err) {
+        console.error(err)
+        if (err.code === 11000) {
+            req.session.error = "Username or email already exists";
             return res.redirect('/profile')
         }
-        req.session.success = "Profile Updated Successfully!"
-        res.status(200).redirect('/profile')
-    })
+        else
+            req.session.error = "Error updating profile"
+        return res.redirect('/profile')
+    }
+
 }
 
 
