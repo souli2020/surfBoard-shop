@@ -4,6 +4,9 @@ const form = document.querySelector('form');
 const newPassword = document.getElementById('new-password');
 const confirmation = document.getElementById('password-confirmation');
 const validationMessage = document.getElementById('validation-message');
+
+const submitBtn = document.getElementById('submitBtn');
+
 function validatePasswords(message, add, remove) {
     validationMessage.textContent = message;
     validationMessage.classList.add(add);
@@ -13,10 +16,15 @@ confirmation.addEventListener('input', e => {
     e.preventDefault();
     newPasswordValue = newPassword.value;
     confirmationValue = confirmation.value;
-    if (newPasswordValue !== confirmationValue) {
+    if (!newPasswordValue || !confirmationValue) {
+        validatePasswords('Please confirm', 'color-red', 'color-green');
+    }
+    else if (newPasswordValue !== confirmationValue) {
         validatePasswords('Passwords must match!', 'color-red', 'color-green');
-    } else {
+        submitBtn.setAttribute('disabled', true)
+    } else if (newPasswordValue === confirmationValue) {
         validatePasswords('Passwords match!', 'color-green', 'color-red');
+        submitBtn.removeAttribute('disabled')
     }
 });
 
