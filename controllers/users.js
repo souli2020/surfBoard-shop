@@ -1,11 +1,6 @@
 const passport = require('passport')
-const cloudinary = require('cloudinary').v2
-cloudinary.config({
-    cloud_name: 'dgd8mcevc',
-    api_key: '795329721125445',
-    api_secret: process.env.CLOUDINARY_SECRET
+const { cloudinary } = require('../cloudinary')
 
-})
 const User = require("../models/User");
 const Post = require('../models/Post')
 //register
@@ -18,14 +13,9 @@ const getRegister = async (req, res) => {
 }
 
 const register = async (req, res) => {
-    // console.log(req.file);
-
 
     const { username, password, email, image } = req.body
-    console.log(req.body)
-    console.log('registering user');
     const userExists = await User.findOne({ email })
-
     if (userExists) {
         req.session.error = "User with the given email already exists";
         return res.redirect('/register')
@@ -33,13 +23,10 @@ const register = async (req, res) => {
     const newUser = new User({ username, email, image })
     //check if the user add a profile image if not the default image will be used
     if (req.file) {
-
         newUser.image.secure_url = req.file.path
         newUser.image.public_id = req.file.filename
-
     }
 
-    // console.log(newUser)
     let user = await User.register(newUser, password);
 
     req.login(user, function (err) {
