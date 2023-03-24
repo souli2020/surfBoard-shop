@@ -148,6 +148,12 @@ form.hide {
   background-color: #2980b9;
 }
 
+/*image profile*/
+.profile-image {
+  width: 100px;
+  border-radius: 50%;
+}
+
 /* provisional styling for all posts page
 /* Styles for pagination section */
 .pagination {
