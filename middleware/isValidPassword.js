@@ -2,6 +2,9 @@ const User = require('../models/User');
 
 const isValidPassword = async (req, res, next) => {
     const { newPassword, passwordConfirmation } = req.body;
+
+
+
     const { user } = await User.authenticate()(req.user.username, req.body.currentPassword)
     if (user) {
         // check if new password values exist
