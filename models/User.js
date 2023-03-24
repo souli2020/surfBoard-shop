@@ -13,14 +13,19 @@ const UserSchema = new mongoose.Schema({
         type: String,
         trim: true,
         // required: [true, 'Must provide a password.'],
-    }, email: {
+    },
+    email: {
         type: String,
         required: [true, 'Must provide an email address.'],
         unique: true,
         trim: true,
     },
     image: {
-        type: String,
+        secure_url: {
+            type: String,
+            default: '/images/default-profile.jpg'
+        },
+        public_id: String
     },
     posts: [
         {
