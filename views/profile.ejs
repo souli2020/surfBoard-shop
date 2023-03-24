@@ -1,6 +1,12 @@
 <% layout('layouts/boilerplate') -%>
 
-<h1><%= currentUser.username %>'s Profile</h1>
+<h1>
+<img src="<%= currentUser.image.secure_url %>"
+ alt="<%= currentUser.username %>'s Profile image"
+ class="profile-image"
+ >
+<%= currentUser.username %>'s Profile
+</h1>
 
 <p>recent posts:</p>
 <% if(!posts.length) { %>
@@ -13,7 +19,7 @@
 <% }) %>
 
 <button style="display: block;" type="button" id="updateBtn">Update profile</button>
-<form action="/profile?_method=PUT" method="POST" id="update-profile" class="displayForm">
+<form action="/profile?_method=PUT" method="POST" id="update-profile" class="displayForm" enctype="multipart/form-data">
     <div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="username" value="<%= currentUser.username %>"
@@ -39,6 +45,7 @@
     </div>
     <div>
         <label for="image">Image:</label>
+        <small>(this will delete the existing profile image)</small>
         <input type="file" id="image" name="image">
     </div>
 
