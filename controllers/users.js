@@ -1,5 +1,11 @@
 const passport = require('passport')
+const cloudinary = require('cloudinary').v2
+cloudinary.config({
+    cloud_name: 'dgd8mcevc',
+    api_key: '795329721125445',
+    api_secret: process.env.CLOUDINARY_SECRET
 
+})
 const User = require("../models/User");
 const Post = require('../models/Post')
 //register
@@ -12,17 +18,30 @@ const getRegister = async (req, res) => {
 }
 
 const register = async (req, res) => {
+    // console.log(req.file);
+
+
     const { username, password, email, image } = req.body
+    console.log(req.body)
     console.log('registering user');
     const userExists = await User.findOne({ email })
+
     if (userExists) {
-        const { username, email } = req.body
         req.session.error = "User with the given email already exists";
-        return res.redirect('register')
+        return res.redirect('/register')
     }
     const newUser = new User({ username, email, image })
+    //check if the user add a profile image if not the default image will be used
+    if (req.file) {
 
+        newUser.image.secure_url = req.file.path
+        newUser.image.public_id = req.file.filename
+
+    }
+
+    // console.log(newUser)
     let user = await User.register(newUser, password);
+
     req.login(user, function (err) {
         if (err) {
             req.session.error = "Something went wrong. We can't login the user."
@@ -90,26 +109,39 @@ const updateProfile = async (req, res) => {
     const { username, userEmail } = req.body
     // console.log(res.locals)
     res.locals.user = req.user;
-    // console.log(res.locals.user)
-    // const { email, username } = req.body
+
     const { email } = req.user
-    // console.log(email)
-    const user = await User.findOne({ email })
-    // console.log(user)
+
+    const user = await User.findOne({ email }).populate('image')
+    console.log(`the user in update profile: ${user}`)
     if (!user) {
         req.session.error = "User not found";
         return res.redirect('/profile')
     }
-    // const userNameExists = await User.findOne({ username })
-    // const userEmailExists = await User.findOne({ userEmail })
-    // if (userNameExists || userEmailExists) {
-    //          req.session.error = "Username or email Not Available";
-    //     return res.redirect('/profile')
-    // }
+
     try {
+        //check if the user want to update the profile image so the previous one should be deleted
+        if (req.file) {
+            const previousImageId = user.image.public_id;
+            if (previousImageId) {
+                await cloudinary.uploader.destroy(previousImageId);
+                user.image.public_id = req.file.filename;
+                user.image.secure_url = req.file.path;
+                await user.save()
+            }
+            //check if the profile image is the default image
+            else if (user.image.secure_url === "/images/default-profile.jpg") {
+                user.image.public_id = req.file.filename;
+                user.image.secure_url = req.file.path;
+                await user.save()
+            }
+
+        }
         const newUser = await User.findOneAndUpdate({ email }, req.body, { new: true, runValidators: true })
+        newUser.image.public_id = user.image.public_id;
+        newUser.image.secure_url = user.image.secure_url;
         await newUser.save()
-        req.login(newUser, function (err) {
+        await req.login(newUser, function (err) {
             if (err) {
                 req.session.error = "Error logging in after profile update"
                 return res.redirect('/profile')
