@@ -212,7 +212,7 @@ const updatePw = async (req, res) => {
         res.status(200).redirect('/forgot-password');
     } catch (error) {
         console.error(error);
-        req.session.error = " An error occurred while sending reset email"
+        req.session.error = " An error occurred while sending reset email! please try again"
         res.status(500).redirect('/forgot-password');
     }
 
