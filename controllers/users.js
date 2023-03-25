@@ -3,6 +3,15 @@ const { cloudinary } = require('../cloudinary')
 
 const User = require("../models/User");
 const Post = require('../models/Post')
+const crypto = require('crypto')
+
+var SibApiV3Sdk = require('sib-api-v3-sdk');
+var defaultClient = SibApiV3Sdk.ApiClient.instance;
+
+// Configure API key authorization: api-key
+var apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+
 //register
 const getRegister = async (req, res) => {
     res.render('register', {
@@ -153,16 +162,13 @@ const updateProfile = async (req, res) => {
 
 
 
-
-
-
 const deleteProfile = async (req, res) => {
     res.status(200).send('delete ¨rofile page')
 }
 
 
-const forgetPw = async (req, res) => {
-    res.status(200).render('forgot-pw')
+const getForgotPw = async (req, res) => {
+    res.render('users/forgot');
 }
 
 
@@ -170,10 +176,53 @@ const forgetPw = async (req, res) => {
 
 
 const updatePw = async (req, res) => {
-    res.status(200).send('password updated')
+    const token = await crypto.randomBytes(20).toString('hex');
+
+    const user = await User.findOne({ email: req.body.email })
+    if (!user) {
+        req.session.error = 'No account with that email address exists.';
+        return res.redirect('/forgot-password');
+    }
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+    let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
+
+    sendSmtpEmail = {
+        to: [{
+            email: user.email,
+            name: user.username,
+        }],
+        templateId: 1,
+        params: {
+            reset_link: `http://${req.headers.host}/reset/${token}`,
+            username: user.username,
+
+        }
+    };
+    try {
+        let data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+        console.log(data);
+        res.status(200).send('Password reset email sent');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error sending password reset email');
+    }
+
 }
 const resetPw = async (req, res) => {
-    res.status(200).send('password forgeten page')
+    const { token } = req.params;
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } })
+    if (!user) {
+        req.session.error = 'Password reset token is invalid or has expired.';
+        return res.redirect('/forgot-password');
+    }
+    res.render('users/reset', { token });
 }
 const updateResetPw = async (req, res) => {
     res.status(200).send('password forgeten page')
@@ -184,4 +233,4 @@ const updateResetPw = async (req, res) => {
 
 
 
-module.exports = { getRegister, getLogin, register, getProfile, updateProfile, deleteProfile, login, logOut, forgetPw, resetPw, updatePw, updateResetPw }
+module.exports = { getRegister, getLogin, register, getProfile, updateProfile, deleteProfile, login, logOut, getForgotPw, resetPw, updatePw, updateResetPw }
