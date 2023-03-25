@@ -208,10 +208,12 @@ const updatePw = async (req, res) => {
     try {
         let data = await apiInstance.sendTransacEmail(sendSmtpEmail);
         console.log(data);
-        res.status(200).send('Password reset email sent');
+        req.session.success = "an email to reset your password has been sent! please check your email for further instructions"
+        res.status(200).redirect('/forgot-password');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error sending password reset email');
+        req.session.error = " An error occurred while sending reset email"
+        res.status(500).redirect('/forgot-password');
     }
 
 }
