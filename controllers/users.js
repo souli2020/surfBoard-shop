@@ -5,12 +5,9 @@ const User = require("../models/User");
 const Post = require('../models/Post')
 const crypto = require('crypto')
 
-var SibApiV3Sdk = require('sib-api-v3-sdk');
-var defaultClient = SibApiV3Sdk.ApiClient.instance;
+const sendTransactionalEmail = require('../sendinblue')
 
-// Configure API key authorization: api-key
-var apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
+
 
 //register
 const getRegister = async (req, res) => {
@@ -189,32 +186,10 @@ const updatePw = async (req, res) => {
 
     await user.save();
 
-    let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-
-    let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-
-    sendSmtpEmail = {
-        to: [{
-            email: user.email,
-            name: user.username,
-        }],
-        templateId: 1,
-        params: {
-            reset_link: `http://${req.headers.host}/reset/${token}`,
-            username: user.username,
-
-        }
-    };
-    try {
-        let data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-        console.log(data);
-        req.session.success = "an email to reset your password has been sent! please check your email for further instructions"
-        res.status(200).redirect('/forgot-password');
-    } catch (error) {
-        console.error(error);
-        req.session.error = " An error occurred while sending reset email! please try again"
-        res.status(500).redirect('/forgot-password');
-    }
+    //move the sendinblue code 
+    let success = "an email to reset your password has been sent! please check your email for further instructions";
+    let error = " An error occurred while sending reset email! please try again"
+    await sendTransactionalEmail(req, res, user, 1, token, '/forgot-password', success, error)
 
 }
 const resetPw = async (req, res) => {
@@ -227,7 +202,34 @@ const resetPw = async (req, res) => {
     res.render('users/reset', { token });
 }
 const updateResetPw = async (req, res) => {
-    res.status(200).send('password forgeten page')
+    const { password, confirm } = req.body;
+    const { token } = req.params;
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } })
+    if (!user) {
+        req.session.error = 'Password reset token is invalid or has expired.';
+        return res.redirect(`/reset/${token}`);
+    }
+    if (password !== confirm) {
+        req.session.error = 'Password does not match'
+        res.redirect(`/reset/${token}`)
+    }
+    else {
+        req.session.success = "password successfully changed"
+        await user.setPassword(password)
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        await req.login(user, (err) => {
+
+            if (err) {
+                req.session.error = "Error logging in after password update"
+                return res.redirect('/')
+            }
+            res.redirect('/')
+        })
+        await sendTransactionalEmail(req, res, user, 2)
+    }
 }
 
 
