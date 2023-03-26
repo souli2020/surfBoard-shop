@@ -6,18 +6,23 @@ const Post = require('./models/Post')
 
 const genFakePosts = async () => {
     await Post.deleteMany({})
-    for (let i = 0; i <= 40; i++) {
 
-        const post = {
-            title: faker.lorem.word(),
-            description: faker.lorem.text(),
-            author: "641719e543fcd9a317a50dd7",
-
-
+    for (let i = 0; i < 600; i++) {
+        const random1000 = Math.floor(Math.random() * 1000);
+        const random5 = Math.floor(Math.random() * 6);
+        const title = faker.lorem.word();
+        const description = faker.lorem.text();
+        const postData = {
+            title,
+            description,
+            price: random1000,
+            avgRating: random5,
+            author: '6420541eeab9760eb41d2efe'
         }
-        await Post.create(post)
+        let post = await Post.create(postData);
+        await post.save();
     }
-    console.log(' 40 posts created')
+    console.log('600 new posts created');
 
 }
 
