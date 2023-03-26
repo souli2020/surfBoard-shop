@@ -1,30 +1,78 @@
 const Post = require('../models/Post')
 const Review = require('../models/Review')
 const { cloudinary } = require('../cloudinary')
-// cloudinary.config({
-//     cloud_name: 'dgd8mcevc',
-//     api_key: '795329721125445',
-//     api_secret: process.env.CLOUDINARY_SECRET
+const querystring = require('querystring')
 
-// })
-
+//get all posts and the filters
 const getPosts = async (req, res) => {
+    const searchParams = req.query;
+    console.log(searchParams);
 
-    const result = await Post.paginate({}, {
+
+
+    // build query object based on search params
+    let query = {};
+
+    // set avgRating filter only if provided
+    if (searchParams.avgRating) {
+        query.avgRating = {
+            $in: Array.isArray(searchParams.avgRating) ?
+                searchParams.avgRating.map((r) => Number(r)) :
+                [Number(searchParams.avgRating)]
+        };
+    }
+
+    // set price filter only if provided
+    let priceFilter = {};
+    if (searchParams.price && searchParams.price.min !== '') {
+        priceFilter.$gte = searchParams.price.min;
+    }
+    if (searchParams.price && searchParams.price.max !== '') {
+        priceFilter.$lte = searchParams.price.max;
+    }
+    if (Object.keys(priceFilter).length > 0) {
+        query.price = priceFilter;
+        // update searchParams with price values
+        searchParams.price = {
+            min: priceFilter.$gte || "",
+            max: priceFilter.$lte || "",
+        };
+        // store price filter in res.locals to persist across pages
+        res.locals.price = priceFilter
+
+    }
+
+
+    if (searchParams.search) {
+        query.$or = [
+            { title: { $regex: searchParams.search, $options: 'i' } },
+            { description: { $regex: searchParams.search, $options: 'i' } }
+        ];
+    }
+
+    const result = await Post.paginate({ ...query }, {
         page: req.query.page || 1,
         limit: 10,
         sort: { 'updatedAt': -1 }
-    })
+    });
+
+    console.log(`this the result :${result}`);
 
 
     if (result.docs.length < 1) {
-        return res.status(404).redirect('/')
+        req.session.error = "No results found";
+        return res.status(404).redirect('/');
     }
-    req.session.success = "welcome"
-    res.status(200).render('posts/index', { result, title: 'All Posts' })
-    // res.status(200).json({ posts })
 
-}
+    // persist searchParams across pages
+    const { avgRating, price, search } = searchParams;
+
+    res.render('posts/index', { result, title: 'All Posts', searchParams, querystring });
+
+};
+////////////////////////////////////////////////////
+
+
 //new post form
 const getNewPost = async (req, res) => {
     res.status(200).render('posts/new', { title: 'Add new Post' })
