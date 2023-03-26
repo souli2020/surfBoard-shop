@@ -1,0 +1,42 @@
+<form action="/posts" method="GET">
+    <!-- search -->
+   <fieldset> 
+    <legend> Search  </legend>
+    <label for="search">
+        <input type="text" name="search" id="search" placeholder="search" value="<%= searchParams.search %>" />
+    </label>
+    </fieldset>
+
+  
+<!-- price -->
+    <fieldset>
+        <legend>  Price </legend>
+        <label for="min">Min</label>
+            <input type="number" id="min" name="price[min]" min="0" max="10000" placeholder="Min"  step="1" value="<%= searchParams.price? searchParams.price.min : ''   %>">
+        <label for="max">Max</label>
+            <input type="number" id="max" name="price[max]"  min="0" max="10000" placeholder="Max"  step="1" value="<%= searchParams.price? searchParams.price.max : '' %>">
+
+        
+    </fieldset>
+<!-- rating -->
+    <fieldset>
+        <legend> Rating </legend>
+<label for="zero-stars"> 0 stars</label>
+<input type="checkbox" id="zero-stars" value="0" name="avgRating[]"  <%= searchParams.avgRating && searchParams.avgRating.includes('0') ? 'checked' : '' %>>
+<label for="one-star">1 star</label>
+<input type="checkbox" id="one-star" value="1" name="avgRating[]" <%= searchParams.avgRating && searchParams.avgRating.includes('1') ? 'checked' : '' %>>
+<label for="two-stars">2 stars</label>
+<input type="checkbox" id="two-stars" value="2" name="avgRating[]" <%= searchParams.avgRating && searchParams.avgRating.includes('2') ? 'checked' : '' %> >
+<label for="three-stars">3 stars</label> 
+<input type="checkbox" id="three-stars" value="3" name="avgRating[]" <%= searchParams.avgRating && searchParams.avgRating.includes('3') ? 'checked' : '' %>>
+<label for="for-stars">4 stars</label>
+<input type="checkbox" id="for-stars" value="4" name="avgRating[]" <%= searchParams.avgRating && searchParams.avgRating.includes('4') ? 'checked' : '' %>>
+<label for="five-stars">5 stars</label>
+<input type="checkbox" id="five-stars" value="5" name="avgRating[]" <%= searchParams.avgRating && searchParams.avgRating.includes('5') ? 'checked' : '' %>>        
+    </fieldset>
+    <div>
+        <a href="/posts">reset form</a>
+    </div>
+
+    <input type="submit">
+</form>
