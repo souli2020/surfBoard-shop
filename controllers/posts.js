@@ -1,14 +1,20 @@
 const Post = require('../models/Post')
 const Review = require('../models/Review')
 const { cloudinary } = require('../cloudinary')
+
+//stringify the req.query   to use it in links
 const querystring = require('querystring')
+
+function removeSpecialChars(str) {
+    // Define a regular expression to match all non-alphanumeric characters
+    const pattern = /[^a-zA-Z0-9\s]/g;
+    // Use the replace() method to replace all matches with an empty string
+    return str.replace(pattern, '');
+}
 
 //get all posts and the filters
 const getPosts = async (req, res) => {
     const searchParams = req.query;
-    console.log(searchParams);
-
-
 
     // build query object based on search params
     let query = {};
@@ -23,34 +29,26 @@ const getPosts = async (req, res) => {
     }
 
     // set price filter only if provided
-    let priceFilter = {};
-    if (searchParams.price && searchParams.price.min !== '') {
-        priceFilter.$gte = searchParams.price.min;
-    }
-    if (searchParams.price && searchParams.price.max !== '') {
-        priceFilter.$lte = searchParams.price.max;
-    }
-    if (Object.keys(priceFilter).length > 0) {
-        query.price = priceFilter;
-        // update searchParams with price values
-        searchParams.price = {
-            min: priceFilter.$gte || "",
-            max: priceFilter.$lte || "",
-        };
-        // store price filter in res.locals to persist across pages
-        res.locals.price = priceFilter
+    if (searchParams.price) {
 
+        query.price = { $lt: Number(searchParams.price) };
     }
+
 
 
     if (searchParams.search) {
+        let search = new RegExp(removeSpecialChars(searchParams.search), 'i');
+        console.log(search)
         query.$or = [
-            { title: { $regex: searchParams.search, $options: 'i' } },
-            { description: { $regex: searchParams.search, $options: 'i' } }
+            { title: search },
+            { description: search },
+            { location: search }
+
+            // { description: { $regex: searchParams.search, $options: 'i' } }
         ];
     }
 
-    const result = await Post.paginate({ ...query }, {
+    const result = await Post.paginate(query, {
         page: req.query.page || 1,
         limit: 10,
         sort: { 'updatedAt': -1 }
@@ -64,10 +62,11 @@ const getPosts = async (req, res) => {
         return res.status(404).redirect('/');
     }
 
-    // persist searchParams across pages
-    const { avgRating, price, search } = searchParams;
+    const queryString = querystring.stringify(searchParams);
 
-    res.render('posts/index', { result, title: 'All Posts', searchParams, querystring });
+
+
+    res.render('posts/index', { result, title: 'All Posts', searchParams, queryString });
 
 };
 ////////////////////////////////////////////////////
