@@ -11,12 +11,12 @@
     <span>Page <%= result.page %> of <%= result.totalPages %></span>
 
     <% if (result.hasPrevPage) { %>
-        <a href="http://localhost:3000/posts?page=<%= result.prevPage %>&querystring.stringify({...searchParams}) %>"
+        <a href="http://localhost:3000/posts?<%= queryString %>&page=<%= result.prevPage %>"
             style="padding: 0.5rem; background-color: #f0f0f0; border-radius: 0.25rem;">Previous</a>
         <% } %>
 
             <% if (result.hasNextPage) { %>
-                <a href="http://localhost:3000/posts?page=<%= result.nextPage %>&<%= querystring.stringify({...searchParams}) %>"
+                <a href="http://localhost:3000/posts?<%= queryString %>&page=<%= result.nextPage %>"
                     style="padding: 0.5rem; background-color: #f0f0f0; border-radius: 0.25rem;">Next</a>
                 <% } %>
 </div>
