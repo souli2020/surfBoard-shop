@@ -12,7 +12,7 @@
 4. Run `npm start` to start the server at port 3000
 
 
-## At this pint od developement the project allows users to:
+## At this point of developement the project allows users to:
 
 1. **Create an account**: Users can register to the website by filling out a registration form.
 
