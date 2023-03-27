@@ -7,7 +7,7 @@ const Post = require('./models/Post')
 const genFakePosts = async () => {
     await Post.deleteMany({})
 
-    for (let i = 0; i < 600; i++) {
+    for (let i = 0; i <= 400; i++) {
         const random1000 = Math.floor(Math.random() * 1000);
         const random5 = Math.floor(Math.random() * 6);
         const title = faker.lorem.word();
