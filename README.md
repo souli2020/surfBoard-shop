@@ -30,4 +30,4 @@
 
 8. **Search posts by filters**: Users can search for posts by applying various filters.
 
-### The next step in the project will be to add styling to the website to improve its appearance and user experience.
+## The project is undergoing a migration from EJS to React..
